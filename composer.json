@@ -1,7 +1,7 @@
 {
   "name": "rainflute/confluence-php-client",
   "description": "Confluence API PHP Client",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "license": "MIT",
   "keywords": [
     "Atlassian",
@@ -14,7 +14,6 @@
     {
       "name": "Yuxiao (Shawn) Tan",
       "email": "yuxiaota@gmail.com",
-      "homepage": "http://www.adlogix.eu"
     }
   ],
   "minimum-stability": "stable",

@@ -1,4 +1,4 @@
-# ConfluencePHPClient
+# Confluence PHP Client
 A Confluence RESTful API client in PHP
 
 An Object Oriented wrapper for Confluence, written PHP5
@@ -10,7 +10,7 @@ An Object Oriented wrapper for Confluence, written PHP5
 ## Installation
 
 ```bash
-$ php composer.phar require rainflute/ConfluencePHPClient
+$ php composer.phar require rainflute/confluence-php-client
 ```
 
 ## Usage
