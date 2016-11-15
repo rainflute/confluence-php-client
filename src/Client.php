@@ -1,13 +1,16 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: ytan
- * Date: 10/27/16
- * Time: 11:14 PM
+ * This file is part of the rainflute/confluencePHPClient.
+ *
+ * (c) Yuxiao (Shawn) Tan <yuxiaota@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
 namespace Rainflute\ConfluenceClient;
 
-use Rainflute\ConfluenceClient\Model\ConfluencePageModel;
+use Rainflute\ConfluenceClient\Entity\ConfluencePage;
 
 class Client
 {
@@ -23,6 +26,7 @@ class Client
      * @var string Confluence Username
      */
     private $username;
+
 
     /**
      * ConfluenceRepository constructor.
@@ -40,7 +44,7 @@ class Client
     /**
      * Create new page
      *
-     * @param ConfluencePageModel $page
+     * @param ConfluencePage $page
      * @return mixed
      * @throws \Exception
      */
@@ -71,7 +75,7 @@ class Client
     /**
      * Update an existing page
      *
-     * @param ConfluencePageModel $page
+     * @param ConfluencePage $page
      * @return mixed
      * @throws \Exception
      */
@@ -190,7 +194,7 @@ class Client
      *
      * @throws \Exception
      */
-    protected function request($method, $url, $data = null, $headers = ['Content-Type' => 'application/json'])
+    public function request($method, $url, $data = null, $headers = ['Content-Type' => 'application/json'])
     {
         //Detect invalid method
         $method = strtolower($method);
@@ -198,7 +202,6 @@ class Client
         if (!in_array($method, $methods)) {
             throw new \Exception('Invalid method');
         }
-
         $curl = curl_init();
         curl_setopt_array($curl,[
             CURLOPT_URL=>$url,
@@ -206,11 +209,12 @@ class Client
             CURLOPT_USERPWD=> $this->username . ':' . $this->password,
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_CUSTOMREQUEST => strtoupper($method),
-            CURLOPT_POSTFIELDS => $data
         ]);
 
+        curl_setopt($curl,CURLOPT_POST,$data);
+
         foreach ($headers as $key => $value) {
-            curl_setopt($curl,CURLOPT_HEADER,$value);
+            curl_setopt($curl,CURLOPT_HTTPHEADER,$value);
         }
 
         $serverOutput = curl_exec ($curl);

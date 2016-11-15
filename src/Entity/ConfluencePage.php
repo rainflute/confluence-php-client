@@ -1,13 +1,16 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: ytan
- * Date: 10/27/16
- * Time: 11:38 PM
+ * This file is part of the rainflute/confluencePHPClient.
+ *
+ * (c) Yuxiao (Shawn) Tan <yuxiaota@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
-namespace Rainflute\ConfluenceClient\Model;
 
-class ConfluencePageModel
+namespace Rainflute\ConfluenceClient\Entity;
+
+class ConfluencePage
 {
     /**
      * @var int $id
@@ -60,7 +63,7 @@ class ConfluencePageModel
 
     /**
      * @param string $type
-     * @return ConfluencePageModel
+     * @return ConfluencePage
      */
     public function setType($type)
     {
@@ -78,7 +81,7 @@ class ConfluencePageModel
 
     /**
      * @param mixed $id
-     * @return ConfluencePageModel
+     * @return ConfluencePage
      */
     public function setId($id)
     {
@@ -96,7 +99,7 @@ class ConfluencePageModel
 
     /**
      * @param mixed $title
-     * @return ConfluencePageModel
+     * @return ConfluencePage
      */
     public function setTitle($title)
     {
@@ -114,7 +117,7 @@ class ConfluencePageModel
 
     /**
      * @param mixed $space
-     * @return ConfluencePageModel
+     * @return ConfluencePage
      */
     public function setSpace($space)
     {
@@ -132,7 +135,7 @@ class ConfluencePageModel
 
     /**
      * @param mixed $ancestors
-     * @return ConfluencePageModel
+     * @return ConfluencePage
      */
     public function setAncestors($ancestors)
     {
@@ -150,7 +153,7 @@ class ConfluencePageModel
 
     /**
      * @param mixed $content
-     * @return ConfluencePageModel
+     * @return ConfluencePage
      */
     public function setContent($content)
     {
@@ -168,7 +171,7 @@ class ConfluencePageModel
 
     /**
      * @param int $version
-     * @return ConfluencePageModel
+     * @return ConfluencePage
      */
     public function setVersion($version)
     {
@@ -186,7 +189,7 @@ class ConfluencePageModel
 
     /**
      * @param mixed $children
-     * @return ConfluencePageModel
+     * @return ConfluencePage
      */
     public function setChildren($children)
     {
@@ -204,7 +207,7 @@ class ConfluencePageModel
 
     /**
      * @param string $url
-     * @return ConfluencePageModel
+     * @return ConfluencePage
      */
     public function setUrl($url)
     {
@@ -222,7 +225,7 @@ class ConfluencePageModel
 
     /**
      * @param mixed $createdDate
-     * @return ConfluencePageModel
+     * @return ConfluencePage
      */
     public function setCreatedDate($createdDate)
     {
