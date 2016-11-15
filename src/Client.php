@@ -15,30 +15,17 @@ use Rainflute\ConfluenceClient\Entity\ConfluencePage;
 class Client
 {
     /**
-     * @var string $confluence_url Confluence host url
+     * @var Curl
      */
-    private $confluenceUrl;
-    /**
-     * @var string confluence Password
-     */
-    private $password;
-    /**
-     * @var string Confluence Username
-     */
-    private $username;
-
+    private $curl;
 
     /**
-     * ConfluenceRepository constructor.
-     * @param string $url
-     * @param string $username
-     * @param string $password
+     * Class constructor
+     * @param Curl $curl
      */
-    public function __construct($url,$username,$password)
+    public function __construct(Curl $curl)
     {
-        $this->confluenceUrl = $url;
-        $this->password = $password;
-        $this->username = $username;
+        $this->curl = $curl;
     }
 
     /**
@@ -68,7 +55,7 @@ class Client
             ],
         ];
 
-        return $this->request('GET',$this->confluenceUrl."/content",$data);
+        return $this->request('GET',$this->curl->getHost()."/content",$data);
     }
 
 
@@ -95,7 +82,7 @@ class Client
             "version"=>["number"=>$page->getVersion()]
         ];
 
-        return $this->request('POST',$this->confluenceUrl."/content/{$page->getId()}",$data);
+        return $this->request('POST',$this->curl->getHost()."/content/{$page->getId()}",$data);
     }
 
     /**
@@ -107,17 +94,18 @@ class Client
      */
     public function deletePage($id)
     {
-        return $this->request('DELETE',$this->confluenceUrl."/content/$id");
+        return $this->request('DELETE',$this->curl->getHost()."/content/$id");
     }
 
     /**
      * Search page by title, space key, type or id
      * @param $parameters
      * @return int
-     * @throws Exception
+     * @throws \Exception
      */
     public function selectPageBy($parameters){
-        $url = $this->confluenceUrl."/content?";
+        if(!is_array($parameters)) throw new \Exception('Invalid argument');
+        $url = $this->curl->getHost()."/content?";
         if(isset($parameters['title'])){
             $url = $url."title={$parameters['title']}&";
         }
@@ -128,7 +116,7 @@ class Client
             $url = $url."type={$parameters['type']}&";
         }
         if(isset($parameters['id'])){
-            $url = $this->confluenceUrl."/content/".$parameters['id']."?";
+            $url = $this->curl->getHost()."/content/".$parameters['id']."?";
         }
         if(isset($parameters['expand'])){
             $url = $url."expand=".$parameters['expand'];
@@ -154,7 +142,7 @@ class Client
         ];
         return $this->request(
             'POST',
-            $this->confluenceUrl."/content/$parentPageId/child/attachment",
+            $this->curl->getHost()."/content/$parentPageId/child/attachment",
             $data,
             $headers
         );
@@ -169,7 +157,7 @@ class Client
      */
     public function selectAttachments($pageId)
     {
-        return $this->request('GET',$this->confluenceUrl."/content/$pageId/child/attachment");
+        return $this->request('GET',$this->curl->getHost()."/content/$pageId/child/attachment");
     }
 
     /**
@@ -179,7 +167,7 @@ class Client
      * @throws \Exception
      */
     public function addLabel($pageId,$labels){
-        return $this->request('POST',$this->confluenceUrl."/content/$pageId/label",$labels);
+        return $this->request('POST',$this->curl->getHost()."/content/$pageId/label",$labels);
     }
 
     /**
@@ -187,14 +175,14 @@ class Client
      *
      * @param $method
      * @param $url
-     * @param null  $data
+     * @param array  $data
      * @param array $headers
      *
      * @return int
      *
      * @throws \Exception
      */
-    public function request($method, $url, $data = null, $headers = ['Content-Type' => 'application/json'])
+    public function request($method, $url, $data = [], $headers = ['Content-Type' => 'application/json'])
     {
         //Detect invalid method
         $method = strtolower($method);
@@ -202,25 +190,21 @@ class Client
         if (!in_array($method, $methods)) {
             throw new \Exception('Invalid method');
         }
-        $curl = curl_init();
-        curl_setopt_array($curl,[
+        $this->curl->setOptions([
             CURLOPT_URL=>$url,
-            CURLOPT_HTTPAUTH=>CURLAUTH_BASIC,
-            CURLOPT_USERPWD=> $this->username . ':' . $this->password,
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_CUSTOMREQUEST => strtoupper($method),
-        ]);
+        ])->setHeaders($headers);
 
-        curl_setopt($curl,CURLOPT_POST,$data);
-
-        foreach ($headers as $key => $value) {
-            curl_setopt($curl,CURLOPT_HTTPHEADER,$value);
+        if($data !== []){
+            $this->curl->setOption(CURLOPT_POSTFIELDS, $data);
         }
 
-        $serverOutput = curl_exec ($curl);
-        curl_close ($curl);
+        $serverOutput = $this->curl->execute();
+        $this->curl->close();
+
         if (!$serverOutput) {
-            throw new \Exception('Error: "' . curl_error($curl) . '" - Code: ' . curl_errno($curl));
+            throw new \Exception('Error: "' . $this->curl->getError() . '" - Code: ' . $this->curl->getErrorNumber());
         }
         else {
             return json_encode($serverOutput);
